@@ -63,6 +63,18 @@ module PluginManager
     Parameters.key? title
   end
 
+  def self.enable(title)
+    Parameters[title] ||= {}
+  end
+
+  def self.disable(title)
+    Parameters.delete(title)
+  end
+
+  def self.toggle(title)
+    enabled?(title) ? disable(title) : enable(title)
+  end
+
   def self.parameters(title)
     Parameters[title] || {}
   end
@@ -121,6 +133,10 @@ module PluginManager
     end
   end
 
+  def self.save_config
+    write_ini config_file, Parameters
+  end
+
   def self.search_plugins(path)
     Dir.glob(File.join(path, '*.rb'))
   end
@@ -138,8 +154,8 @@ module PluginManager
 
     def initialize(file)
       @path = file
-      @tags = { 'params' => {}, 'mods' => [] }
       parse_tags
+      @mods = []
       @uninstall = nil
     end
 
@@ -154,6 +170,17 @@ module PluginManager
     def reloadable?
       return false if @path == __FILE__
       @uninstall || !@tags['mods'].empty?
+    end
+
+    def sign
+      a = enabled?
+      b = reloadable?
+      case
+      when  a &&  b then '+'
+      when  a && !b then '*'
+      when !a &&  b then '-'
+      else               ' '
+      end
     end
 
     def title
@@ -176,23 +203,56 @@ module PluginManager
     def inspect
       "#<Plugin #{title}: #{desc}>"
     end
+    alias to_s inspect
 
     def update
-      if reloadable? and @_mtime != File.mtime(@path)
+      if enabled? and reloadable? and @_mtime != File.mtime(@path)
         puts "reload #{inspect}"
         reload!
+        @_mtime = File.mtime(@path)
       end
     end
 
-    def reload!
+    def uninstall
       @uninstall.call if @uninstall
-      # TODO: restore mods
-      # TODO: save mods
+      @mods.each do |klass, nevv, old|
+        klass.class_eval { alias_method old, nevv; remove_method nevv }
+      end.clear
+    end
+
+    def install
+      uid = rand 32768
+      @tags['mods'].each do |name|
+        klass     = 'Object'
+        meth      = nil
+        singleton = false
+        if name.include?('.') || name.include?('::')
+          singleton = true
+          klass, meth = name.split(/\.|::/, 2)
+        elsif name.include?('#')
+          klass, meth = name.split(/#/, 2)
+        else
+          meth = name
+        end
+        klass = eval(klass)
+        klass = klass.singleton_class if singleton
+        nevv = "_#{meth}_#{uid += 1}"
+        klass.class_eval do
+          alias_method nevv, meth
+        end
+        @mods << [klass, nevv, meth]
+      end
       load @path
-      @_mtime = File.mtime(@path)
+    end
+
+    def reload!
+      parse_tags
+      uninstall
+      install
     end
 
     def parse_tags
+      @tags = { 'params' => {}, 'mods' => [] }
       _tag = _para = nil
       File.readlines(@path, chomp: true).each do |line|
         if line.slice!(/^\s*#\s?/)
@@ -232,16 +292,64 @@ module PluginManager
     end
   end
 
+  UI_COLORS = {
+    '+' => Color.new(0, 255, 0),
+    '-' => Color.new(255, 255, 255),
+    '*' => Color.new(0, 0, 255),
+    ' ' => Color.new(255, 255, 255, 160)
+  }
+  def self.ui_enable_plugins
+    index  = 0
+    sprite = Sprite.new
+    size   = Plugins.size
+    canvas = Bitmap.new Graphics.width, size * 32
+    canvas.font.name = ['SimHei']
+    canvas.font.size = 20
+    refresh = lambda do
+      canvas.clear
+      Plugins.each_with_index do |plugin, i|
+        color = UI_COLORS[plugin.sign]
+        if index == i
+          canvas.fill_rect 0, 32 * i, Graphics.width, 32, color
+          canvas.clear_rect 1, 32 * i + 1, Graphics.width - 2, 32 - 2
+        end
+        canvas.font.color = color
+        canvas.draw_text 8, 32 * i, Graphics.width - 8, 32, plugin.title
+      end
+    end
+    sprite.bitmap = canvas
+    _index = -1
+    loop do
+      Input.update
+      index -= 1 if Input.repeat? :UP
+      index += 1 if Input.repeat? :DOWN
+      index %= size
+      refresh.call if _index != index
+      if Input.trigger? :C and Plugins[index].sign != '*'
+        PluginManager.toggle Plugins[index].title
+        refresh.call
+      elsif Input.trigger? :B
+        break
+      end
+      Graphics.update
+    end
+  end
+
   def self.init
     load_config read_ini config_file
     files = paths.flat_map { |path| search_plugins path }
     files.each { |file| Plugins << Plugin.new(file) }
-    # TODO: [UI] enable plugins
-    update # remove this
+    ui_enable_plugins
+    Plugins.each { |plugin| plugin.install if plugin.sign == '+' }
+    save_config
+    display
   end
 
   def self.display
-    Plugins.each { |plugin| p plugin }
+    puts "==> Plugins"
+    Plugins.each do |plugin|
+      puts " [#{plugin.sign}] #{plugin}"
+    end
   end
 
   def self.update
