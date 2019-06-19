@@ -336,6 +336,7 @@ module PluginManager
   end
 
   def self.init
+    Plugins.clear
     load_config read_ini config_file
     files = paths.flat_map { |path| search_plugins path }
     files.each { |file| Plugins << Plugin.new(file) }
@@ -355,4 +356,14 @@ module PluginManager
   def self.update
     Plugins.each(&:update)
   end
+
+  class << Graphics
+    alias update_without_plugin_manager update
+    def update
+      PluginManager.update
+      update_without_plugin_manager
+    end
+  end
 end
+# TODO: So far, I realized that RPG Maker is able to write GUI programs
+#       running ruby(rgss). todo: module UI
