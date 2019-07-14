@@ -1,7 +1,7 @@
 ## 一些编写脚本的笔记/Notes
 
 - [How to Write an RGSS Extension](https://hyrious.me/p/rgss-extension-dll-and-nodll.html)
-- [How to Pass Callback to Dll in RGSS](https://hyrious.me/p/rgss-extension-dll-and-nodll.html)
+- [How to Pass Callback to Dll in RGSS](https://hyrious.me/p/rgss-pass-callback-to-c-api.html)
 
 ## 协议/License
 
