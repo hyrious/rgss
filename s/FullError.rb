@@ -11,11 +11,11 @@
 alias _full_error_rgss_main rgss_main
 def rgss_main(*args, &blk)
   _full_error_rgss_main(*args, &blk)
-rescue => e
+rescue Exception => e
   puts "#{e.class}: #{e.message}"
   e.backtrace.each do |c|
     break if c.start_with?(':1:')
-    if parts = c.match(/^(?<file>.+):(?<line>\d+):in `(?<code>.*)'$/)
+    if parts = c.match(/^(?<file>.+):(?<line>\d+)(?::in `(?<code>.*)')?$/)
       next if parts[:file] == __FILE__
       cd = Regexp.escape(File.join(Dir.getwd, ''))
       file = parts[:file].sub(/^#{cd}/, '')
@@ -23,7 +23,8 @@ rescue => e
         id = inner[:rgss].to_i
         file = "[#{$RGSS_SCRIPTS[id][1]}]"
       end
-      puts "   #{file} #{parts[:line]}: #{parts[:code]}"
+      code = parts[:code] && ": #{parts[:code]}"
+      puts "   #{file} #{parts[:line]}#{code}"
     else
       puts "   #{c}"
     end
@@ -37,7 +38,7 @@ class Game_Interpreter
   def command_355
     begin
       _full_error_command_355
-    rescue => e
+    rescue Exception => e
       event = get_character(0)
       name = event.instance_variable_get(:@event).name
       print "at map #@map_id #{$game_map.display_name}"
