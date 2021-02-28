@@ -8,6 +8,7 @@
 
 - [Taroxd](https://taroxd.github.io/rgss/)
 - [VIPArcher](https://github.com/VIPArcher/RGSS3)
+- [Esphas](https://github.com/ShadowMomo/Smomo-RGSS-Scripts)
 
 ## License
 

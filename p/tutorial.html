@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>RGSS³ 入门教程 - All in One!</title>
     <meta name="viewport" content="width=device-width">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/3.0.1/github-markdown.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/hyrious/github-markdown-css/github-markdown.css">
     <style>
         body {
             box-sizing: border-box;
@@ -33,94 +33,93 @@
         }
     </style>
 </head>
-<body>
-    <article id="main" class="markdown-body">
-        <h2>RGSS³ 入门教程</h2>
-        <section id="toc">
-            <h3>目录</h3>
-        </section>
-        <p>本教程尝试用一页讲完 RGSS 入门，但是讲归讲，多写、多试错才能真正学会一样东西。准备好了，那就开始吧 ——</p>
-        <h3>Ruby &mdash; 字面量、五种变量、面向对象</h3>
-        <h4>字面量</h4>
-        <p>所谓<q>字面</q>，就是要<q>认得</q>代码，解决<q>XXX 是什么</q>的萌新问题。在阅读本文的过程中，虽然我们希望能够<q>循序渐进</q>地把知识点展开，但是知识点之间存在相互的关联，有时你会在前文看到一些无法理解的词句，不要担心，继续往下读就可以了。</p>
-        <p>首先我们做一个读法上的约定，<code>==</code>（两个 <code>=</code> 符号连着写）读作<q>等于</q>，而 <code>=</code> 读作<q>赋值为</q>（还记得吗，无法理解的东西可以先不纠结）。</p>
-        <dl>
-            <dt>空、真、假</dt>
-            <dd><code>nil</code>、<code>true</code>、<code>false</code><br>
-            Ruby 中没有所谓的<q>布尔值（bool）</q>，但是表达式有<q>真假</q>：只有 <code>nil</code> <code>false</code> 是假（指出现分支条件时判定为否），别的都是真（如 <code>0</code>）。假设 T 为真，F 为假，x 为任意，那么有如下运算：<br><pre><code>与：T && x == x; F && x == F<br>或：T || x == T; F || x == x<br>非：!T == F; !F == T</code></pre></dd>
-            <dt>数（Numeric）</dt>
-            <dd><code>3.14159265359</code>、<code>42</code>、<code>1e6</code>（就是<q>10<sup>6</sup></q>）……<br>
-            支持一些常见的运算：<code>3 + 5 == 8</code> <code>5 - 3 == 2</code> <code>3 * 5 == 15</code> <code>5 / 3 == 1</code>（注意，整数运算会得到整数）<code>5.0 / 3 == 1.6666666666666667</code>（至少有一个是小数，结果就会是小数）<code>5 % 3 == 2</code> <code>-5 % 3 == 1</code> 。还有如与、或、亦或、移位等，请自行了解。</dd>
-            <dt>字符串（String）</dt>
-            <dd><code>'hello\n world'</code>、<code>"hello\n world"</code>……<br>双引号里的字符串可以<q>转义</q>，常见的转义符有 <code>\n</code>（换行）<code>\t</code>（制表符）等，<br>还有一种转义叫<q>内嵌表达式</q>，<code>"3 + 5 = #{3 + 5}"</code> 会被转义成 <code>"3 + 5 = 8"</code>，注意当你<q>写下</q>这个字符串时转义就<q>已经</q>完成了。</dd>
-            <dt>符号（Symbol）<small>因为<q>符号</q>在中文里有太多意思，一般倾向于说 Symbol</small></dt>
-            <dd><code>:this_is_a_symbol</code>、<code>:'me too'</code>、<code>:"I'm #{3 + 5}!"</code>……</dd>
-            <dt>数组（Array）</dt>
-            <dd><code>[]</code>、<code>[nil, 1, '2', :'3']</code>……<br>
-            我们可以用<q>下标</q>来访问数组内部的东西，如 <code>[1, 2, 3][0] == 1</code> <code>[1, 2, 3][1] == 2</code> ，也就是说<q>下标从 0 开始</q>，当你使用正数越界访问时，会得到 <code>nil</code>。</dd>
-            <dt>哈希表（Hash）<small>严格来说，<q>hash</q> 是算法，<q>表</q>是数据结构</small></dt>
-            <dd><code>{}</code>、<code>{ 1 => '2', :'3' => [true] }</code>、<code>{ a: 42 }</code>（等价于 <code>{ :a => 42 }</code>）……<br>
-            为方便称呼，我们把 <code>=></code> 左边的叫做<q>键（key）</q>，右边的叫做<q>值（value）</q>。哈希表同样可以使用下标来访问：<code>{ 1 => 2 }[1] == 2</code></dd>
-        </dl>
-        <p>不要问我<q>为什么 X 长成 X 这个样子</q>，这就像在问<q>1 为什么是 1</q>。</p>
-        <p>上文中已经提到了一些<q>运算符</q>，实际运算符的数量并不多，请自行查阅 F1 或者搜索引擎。运算符之间有一定的优先级关系（比如 <code>*/</code> 比 <code>+-</code> 要<q>更优先</q>，所以先算 <code>*/</code>），知道优先级可以帮助我们<q>少写括号</q>，这并不是说不写括号是好事，但是你总得读懂别人的代码吧。</p>
-        <p>最后我们做个小测试，看看你能否说出下面这个表达式最终的结果？</p>
-        <pre><code>[{ true => false, false => true }, { true => true, false => false }][5 / 3][nil]</code></pre>
-        <p>答案（反白可见）：<code class="hidden">&nbsp;nil&nbsp;</code></p>
-        <h4>五种变量</h4>
-        <p>先讲<q>变量</q>，它的基本用法就是 <code>x = 3; x + 5 #=> 8</code> ，读作<q>先把 x 赋值为 3；然后计算 x + 5 # 返回 8（井号直到行尾是注释，不会执行，对执行代码的程序也没有意义）</q>，也没什么好说的。我这里不提<q>数学</q>领域的变量，因为压根不是一回事，也请各位不要混淆。总结一下，变量只有两件事可以干：赋值、使用。</p>
-        <p>但即使是这样，也不得不举个例子：</p>
-        <pre><code>a = 1; b = a; a = 2; b == ?</code></pre>
-        <p>答案（反白可见）：<code class="hidden">1</code> 提示：名与实。</p>
-        <p>猜出来的别忙着高兴，还有一题：</p>
-        <pre><code>a = [1]; b = a; a[0] = 2; b == ?</code></pre>
-        <p>答案（反白可见）：<code class="hidden">[2]</code></p>
-        <p>理解上面两个例子，就可以继续了。我先在桌上排出 5 种变量的写法：</p>
-        <table>
-            <thead>
-                <tr>
-                    <th>举例</th>
-                    <th>写法</th>
-                    <th>读作</th>
-                    <th>作用域</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><code>a</code></td>
-                    <td>小写字母或 _ 开头，接任意大小写字母下划线</td>
-                    <td>（局部）变量</td>
-                    <td>当前方法、和所属块同级</td>
-                </tr>
-                <tr>
-                    <td><code>@a</code></td>
-                    <td>@ 开头，接任意大小写字母下划线</td>
-                    <td>实例变量</td>
-                    <td>当前对象</td>
-                </tr>
-                <tr>
-                    <td><code>@@a</code></td>
-                    <td>@@ 开头，接任意大小写字母下划线</td>
-                    <td>类变量</td>
-                    <td>当前命名空间</td>
-                </tr>
-                <tr>
-                    <td><code>$a</code></td>
-                    <td>$ 开头，接任意大小写字母下划线</td>
-                    <td>全局变量</td>
-                    <td>任何地方</td>
-                </tr>
-                <tr>
-                    <td><code>A</code></td>
-                    <td>大写字母开头，接任意大小写字母下划线</td>
-                    <td>常（变）量</td>
-                    <td>当前命名空间</td>
-                </tr>
-            </tbody>
-        </table>
-        <p>平时说的时候可能会省略括号内的内容。类变量和全局变量因为不推荐使用，我在这里也不会讲，需要的可以自己搜索和查阅文档。</p>
-        <h5>局部变量</h5>
-        <pre><code>def f()
+<body id="main" class="markdown-body">
+    <h2>RGSS³ 入门教程</h2>
+    <section id="toc">
+        <h3>目录</h3>
+    </section>
+    <p>本教程尝试用一页讲完 RGSS 入门，但是讲归讲，多写、多试错才能真正学会一样东西。准备好了，那就开始吧 ——</p>
+    <h3>Ruby &mdash; 字面量、五种变量、面向对象</h3>
+    <h4>字面量</h4>
+    <p>所谓<q>字面</q>，就是要<q>认得</q>代码，解决<q>XXX 是什么</q>的萌新问题。在阅读本文的过程中，虽然我们希望能够<q>循序渐进</q>地把知识点展开，但是知识点之间存在相互的关联，有时你会在前文看到一些无法理解的词句，不要担心，继续往下读就可以了。</p>
+    <p>首先我们做一个读法上的约定，<code>==</code>（两个 <code>=</code> 符号连着写）读作<q>等于</q>，而 <code>=</code> 读作<q>赋值为</q>（还记得吗，无法理解的东西可以先不纠结）。</p>
+    <dl>
+        <dt>空、真、假</dt>
+        <dd><code>nil</code>、<code>true</code>、<code>false</code><br>
+        Ruby 中没有所谓的<q>布尔值（bool）</q>，但是表达式有<q>真假</q>：只有 <code>nil</code> <code>false</code> 是假（指出现分支条件时判定为否），别的都是真（如 <code>0</code>）。假设 T 为真，F 为假，x 为任意，那么有如下运算：<br><pre><code>与：T && x == x; F && x == F<br>或：T || x == T; F || x == x<br>非：!T == F; !F == T</code></pre></dd>
+        <dt>数（Numeric）</dt>
+        <dd><code>3.14159265359</code>、<code>42</code>、<code>1e6</code>（就是<q>10<sup>6</sup></q>）……<br>
+        支持一些常见的运算：<code>3 + 5 == 8</code> <code>5 - 3 == 2</code> <code>3 * 5 == 15</code> <code>5 / 3 == 1</code>（注意，整数运算会得到整数）<code>5.0 / 3 == 1.6666666666666667</code>（至少有一个是小数，结果就会是小数）<code>5 % 3 == 2</code> <code>-5 % 3 == 1</code> 。还有如与、或、亦或、移位等，请自行了解。</dd>
+        <dt>字符串（String）</dt>
+        <dd><code>'hello\n world'</code>、<code>"hello\n world"</code>……<br>双引号里的字符串可以<q>转义</q>，常见的转义符有 <code>\n</code>（换行）<code>\t</code>（制表符）等，<br>还有一种转义叫<q>内嵌表达式</q>，<code>"3 + 5 = #{3 + 5}"</code> 会被转义成 <code>"3 + 5 = 8"</code>，注意当你<q>写下</q>这个字符串时转义就<q>已经</q>完成了。</dd>
+        <dt>符号（Symbol）<small>因为<q>符号</q>在中文里有太多意思，一般倾向于说 Symbol</small></dt>
+        <dd><code>:this_is_a_symbol</code>、<code>:'me too'</code>、<code>:"I'm #{3 + 5}!"</code>……</dd>
+        <dt>数组（Array）</dt>
+        <dd><code>[]</code>、<code>[nil, 1, '2', :'3']</code>……<br>
+        我们可以用<q>下标</q>来访问数组内部的东西，如 <code>[1, 2, 3][0] == 1</code> <code>[1, 2, 3][1] == 2</code> ，也就是说<q>下标从 0 开始</q>，当你使用正数越界访问时，会得到 <code>nil</code>。</dd>
+        <dt>哈希表（Hash）<small>严格来说，<q>hash</q> 是算法，<q>表</q>是数据结构</small></dt>
+        <dd><code>{}</code>、<code>{ 1 => '2', :'3' => [true] }</code>、<code>{ a: 42 }</code>（等价于 <code>{ :a => 42 }</code>）……<br>
+        为方便称呼，我们把 <code>=></code> 左边的叫做<q>键（key）</q>，右边的叫做<q>值（value）</q>。哈希表同样可以使用下标来访问：<code>{ 1 => 2 }[1] == 2</code></dd>
+    </dl>
+    <p>不要问我<q>为什么 X 长成 X 这个样子</q>，这就像在问<q>1 为什么是 1</q>。</p>
+    <p>上文中已经提到了一些<q>运算符</q>，实际运算符的数量并不多，请自行查阅 F1 或者搜索引擎。运算符之间有一定的优先级关系（比如 <code>*/</code> 比 <code>+-</code> 要<q>更优先</q>，所以先算 <code>*/</code>），知道优先级可以帮助我们<q>少写括号</q>，这并不是说不写括号是好事，但是你总得读懂别人的代码吧。</p>
+    <p>最后我们做个小测试，看看你能否说出下面这个表达式最终的结果？</p>
+    <pre><code>[{ true => false, false => true }, { true => true, false => false }][5 / 3][nil]</code></pre>
+    <p>答案（反白可见）：<code class="hidden">&nbsp;nil&nbsp;</code></p>
+    <h4>五种变量</h4>
+    <p>先讲<q>变量</q>，它的基本用法就是 <code>x = 3; x + 5 #=> 8</code> ，读作<q>先把 x 赋值为 3；然后计算 x + 5 # 返回 8（井号直到行尾是注释，不会执行，对执行代码的程序也没有意义）</q>，也没什么好说的。我这里不提<q>数学</q>领域的变量，因为压根不是一回事，也请各位不要混淆。总结一下，变量只有两件事可以干：赋值、使用。</p>
+    <p>但即使是这样，也不得不举个例子：</p>
+    <pre><code>a = 1; b = a; a = 2; b == ?</code></pre>
+    <p>答案（反白可见）：<code class="hidden">1</code> 提示：名与实。</p>
+    <p>猜出来的别忙着高兴，还有一题：</p>
+    <pre><code>a = [1]; b = a; a[0] = 2; b == ?</code></pre>
+    <p>答案（反白可见）：<code class="hidden">[2]</code></p>
+    <p>理解上面两个例子，就可以继续了。我先在桌上排出 5 种变量的写法：</p>
+    <table>
+        <thead>
+            <tr>
+                <th>举例</th>
+                <th>写法</th>
+                <th>读作</th>
+                <th>作用域</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code>a</code></td>
+                <td>小写字母或 _ 开头，接任意大小写字母下划线</td>
+                <td>（局部）变量</td>
+                <td>当前方法、和所属块同级</td>
+            </tr>
+            <tr>
+                <td><code>@a</code></td>
+                <td>@ 开头，接任意大小写字母下划线</td>
+                <td>实例变量</td>
+                <td>当前对象</td>
+            </tr>
+            <tr>
+                <td><code>@@a</code></td>
+                <td>@@ 开头，接任意大小写字母下划线</td>
+                <td>类变量</td>
+                <td>当前命名空间</td>
+            </tr>
+            <tr>
+                <td><code>$a</code></td>
+                <td>$ 开头，接任意大小写字母下划线</td>
+                <td>全局变量</td>
+                <td>任何地方</td>
+            </tr>
+            <tr>
+                <td><code>A</code></td>
+                <td>大写字母开头，接任意大小写字母下划线</td>
+                <td>常（变）量</td>
+                <td>当前命名空间</td>
+            </tr>
+        </tbody>
+    </table>
+    <p>平时说的时候可能会省略括号内的内容。类变量和全局变量因为不推荐使用，我在这里也不会讲，需要的可以自己搜索和查阅文档。</p>
+    <h5>局部变量</h5>
+    <pre><code>def f()
   a = 42
   p a #=> 42
 end
@@ -128,8 +127,8 @@ def g()
   f()
   p a # NameError (undefined local variable or method `a')
 end</code></pre>
-        <h5>实例变量</h5>
-        <pre><code>def f()
+    <h5>实例变量</h5>
+    <pre><code>def f()
   @a = 42
   p @a #=> 42
 end
@@ -137,8 +136,8 @@ def g()
   f()
   p @a #=> 42
 end</code></pre>
-        <h5>常变量</h5>
-        <pre><code>B = 1
+    <h5>常变量</h5>
+    <pre><code>B = 1
 class A
   B = 42
   p B #=> 42
@@ -148,12 +147,12 @@ p B #=> 1
 p A::B #=> 42
 B = A::B #=> warning, previous B is 1
 p B #=> 42</code></pre>
-        <h4>面向对象</h4>
-        <p>有些人已经注意到我在上面使用了 <code>def</code> 和 <code>class</code> ，那么它们是什么呢？</p>
-        <p>在 Ruby 的设计思想中，<q>一切皆为对象</q>是很重要的一个原则，<q>对象</q>在 Ruby 的语境中其实十分简单：拥有自己的<q>数据</q>和<q>行为</q>。数据就是实例变量，行为就是方法。类本质上是定义了某种对象应该拥有哪些方法，而实例变量则是在执行过程中动态产生的。</p>
-        <p><q>实例（Instance）</q>指的是由 <code>某个类.new</code> 产生的一个具体的对象，我们把 <code>.new</code> 产生新对象的行为叫做<q>实例化</q>，实例变量就是<q>作用域</q>在对象这个层面上的变量。</p>
-        <p>例如，有一种<q>计时器</q>，它只记录一个自然数，每次更新时 +1，而且没有上限。我们该如何定义它？</p>
-        <pre><code>class Timer
+    <h4>面向对象</h4>
+    <p>有些人已经注意到我在上面使用了 <code>def</code> 和 <code>class</code> ，那么它们是什么呢？</p>
+    <p>在 Ruby 的设计思想中，<q>一切皆为对象</q>是很重要的一个原则，<q>对象</q>在 Ruby 的语境中其实十分简单：拥有自己的<q>数据</q>和<q>行为</q>。数据就是实例变量，行为就是方法。类本质上是定义了某种对象应该拥有哪些方法，而实例变量则是在执行过程中动态产生的。</p>
+    <p><q>实例（Instance）</q>指的是由 <code>某个类.new</code> 产生的一个具体的对象，我们把 <code>.new</code> 产生新对象的行为叫做<q>实例化</q>，实例变量就是<q>作用域</q>在对象这个层面上的变量。</p>
+    <p>例如，有一种<q>计时器</q>，它只记录一个自然数，每次更新时 +1，而且没有上限。我们该如何定义它？</p>
+    <pre><code>class Timer
   # initialize 方法会在 Timer.new 时被自动调用一次
   def initialize
     @counter = 0
@@ -164,8 +163,8 @@ p B #=> 42</code></pre>
 end
 t = Timer.new # 把 t 赋值为一个 Timer 的实例
 loop { t.update } # 一直调用 t 的 update 方法</code></pre>
-        <p>等等，我怎么知道 t 现在计到多少了呢？嗯，所以我们要再定义一些方法来<q>告诉</q>我们这件事：</p>
-        <pre><code># loop { t.update }
+    <p>等等，我怎么知道 t 现在计到多少了呢？嗯，所以我们要再定义一些方法来<q>告诉</q>我们这件事：</p>
+    <pre><code># loop { t.update }
 class Timer
   def counter
     # return @counter
@@ -173,8 +172,8 @@ class Timer
   end
 end
 loop { t.update; p t.counter }</code></pre>
-        <p>能否让我直接指定 <code>@counter</code> 的值呢？</p>
-        <pre><code>class Timer
+    <p>能否让我直接指定 <code>@counter</code> 的值呢？</p>
+    <pre><code>class Timer
   def counter=(value) # 注意此处<q>=</q>是方法名的一部分，= 左侧不要有任何空格
     @counter = value  # 而这里的<q>=</q>是<q>赋值为</q>
   end
@@ -184,13 +183,13 @@ t.counter=(233) # 上面一行等价于像这样调用了该方法
 # 在不引起歧义的情况下，调用方法时的括号可以省略，如
 f 1, 2 # 等价于 f(1, 2)
 f 1, g 2 # 产生了歧义，会报错</code></pre>
-        <p>方法可以有各种参数，</p>
-        <pre><code>def f(a, *args, &blk)
+    <p>方法可以有各种参数，</p>
+    <pre><code>def f(a, *args, &blk)
   args[-1] # 取变长参数中的最后一个作为返回值
 end
 f(1, 2, 3) #=> 3</code></pre>
-        <p>方法可以被<q>混入（Mixin）</q>，</p>
-        <pre><code>module M
+    <p>方法可以被<q>混入（Mixin）</q>，</p>
+    <pre><code>module M
   def a
     42
   end
@@ -201,8 +200,8 @@ end
 t.a #=> 42
 Timer.extend M
 Timer.a #=> 42（类也是个对象）</code></pre>
-        <p>一些<q>运算符</q>的本质是方法，</p>
-        <pre><code>class Timer
+    <p>一些<q>运算符</q>的本质是方法，</p>
+    <pre><code>class Timer
   def +(other)
     other
   end
@@ -211,48 +210,48 @@ Timer.a #=> 42（类也是个对象）</code></pre>
   end
 end
 t[t + t] #=> 42</code></pre>
-        <p>还有很多很多，建议结合一些具体的代码和文档来学习。</p>
-        <h4>文档</h4>
-        <p>打开 RM 主界面，按下 F1 —— 这就是不花钱不用力能找到的第一份文档，点开最下面的这本<q>参考手册</q>，里面的<q>Ruby 语法</q>和<q>标准库</q>是关于 Ruby 的文档，并没有多长，可以浏览一下。</p>
-        <p>遗憾的是，F1 里的这份 Ruby 文档显然是不全的，有时你会在别人的代码里看到从未见过的写法和用法，这时你可以使用这本<q><a href="https://dl.bintray.com/oneclick/rubyinstaller/ruby-1.9.2-p290-doc-chm.7z">Ruby 1.9.2 官方文档</a></q>。</p>
-        <p>注意，RGSS 内的 Ruby 标准库也是<q>不全的</q>，你在官方文档上看来的标准库有可能不存在于 RGSS 环境，例如 <code>pp</code> <code>Psych</code> 等。</p>
-        <h3>RGSS &mdash; 雪碧、主循环</h3>
-        <p>RGSS 里除了 Ruby 的标准库外，还提供了一套游戏接口，用于控制游戏画面、读取用户输入、播放音频等，你可以在 F1 中看到游戏库的文档。这里我挑重点讲一个<q>雪碧（Sprite）</q>的用法。</p>
-        <h4>雪碧（精灵）</h4>
-        <p>首先这个单词确实不好翻译，其次雪碧也真的是这个单词（笑）。RGSS 为了显示一张图，需要知道</p>
-        <ol>
-            <li>这图每个像素是啥颜色（Bitmap）</li>
-            <li>显示在哪，显示哪一部分（Sprite/Plane+Viewport）</li>
-            <li>显示的时候要不要加特技（如变色、透明、旋转、缩放）（Sprite）</li>
-            <li>谁负责把它画到屏幕上（Graphics）</li>
-        </ol>
-        <p>Sprite 就是一个包含着<q>位置、区域、特技</q>信息的类，可以看到它其实不包含图像数据，所以需要和 Bitmap 一起使用。</p>
-        <pre><code>s = Sprite.new
+    <p>还有很多很多，建议结合一些具体的代码和文档来学习。</p>
+    <h4>文档</h4>
+    <p>打开 RM 主界面，按下 F1 —— 这就是不花钱不用力能找到的第一份文档，点开最下面的这本<q>参考手册</q>，里面的<q>Ruby 语法</q>和<q>标准库</q>是关于 Ruby 的文档，并没有多长，可以浏览一下。</p>
+    <p>遗憾的是，F1 里的这份 Ruby 文档显然是不全的，有时你会在别人的代码里看到从未见过的写法和用法，这时你可以使用这本<q><a href="https://dl.bintray.com/oneclick/rubyinstaller/ruby-1.9.2-p290-doc-chm.7z">Ruby 1.9.2 官方文档</a></q>。</p>
+    <p>注意，RGSS 内的 Ruby 标准库也是<q>不全的</q>，你在官方文档上看来的标准库有可能不存在于 RGSS 环境，例如 <code>pp</code> <code>Psych</code> 等。</p>
+    <h3>RGSS &mdash; 雪碧、主循环</h3>
+    <p>RGSS 里除了 Ruby 的标准库外，还提供了一套游戏接口，用于控制游戏画面、读取用户输入、播放音频等，你可以在 F1 中看到游戏库的文档。这里我挑重点讲一个<q>雪碧（Sprite）</q>的用法。</p>
+    <h4>雪碧（精灵）</h4>
+    <p>首先这个单词确实不好翻译，其次雪碧也真的是这个单词（笑）。RGSS 为了显示一张图，需要知道</p>
+    <ol>
+        <li>这图每个像素是啥颜色（Bitmap）</li>
+        <li>显示在哪，显示哪一部分（Sprite/Plane+Viewport）</li>
+        <li>显示的时候要不要加特技（如变色、透明、旋转、缩放）（Sprite）</li>
+        <li>谁负责把它画到屏幕上（Graphics）</li>
+    </ol>
+    <p>Sprite 就是一个包含着<q>位置、区域、特技</q>信息的类，可以看到它其实不包含图像数据，所以需要和 Bitmap 一起使用。</p>
+    <pre><code>s = Sprite.new
 s.bitmap = Bitmap.new 20, 20
 s.bitmap.fill_rect(s.bitmap.rect, Color.new(255,0,0))
 loop { Graphics.update }
 # 在游戏中运行，你应该看到屏幕左上角一个小小的红色方块，它就是代码里的<q>s</q></code></pre>
-        <p>在 RGSS 中，屏幕坐标系是 → 为 X 轴，↓ 为 Y 轴，也就是说原点在左上角。图片有宽高，Sprite 有 src_rect, ox, oy, x, y，它们是怎么定位的呢？</p>
-        <pre><code>bitmap                    sprite
+    <p>在 RGSS 中，屏幕坐标系是 → 为 X 轴，↓ 为 Y 轴，也就是说原点在左上角。图片有宽高，Sprite 有 src_rect, ox, oy, x, y，它们是怎么定位的呢？</p>
+    <pre><code>bitmap                    sprite
 +-----------------+       +------------+
 | src_rect        |       |\     S     |
 | +------+    B   |  -->  | (ox, oy) --|--> (x, y)
 | |   S  |        |       |            |
 | +------+        |       +------------+
 +-----------------+       (稍微放大了一点)</code></pre>
-        <p>首先从 bitmap 上裁下 src_rect 指定的一块图案，然后以 src_rect 的左上角为原点确定 (ox, oy) 的位置，最后把 (ox, oy) 这个点对齐到 (x, y) 上，就是该 sprite 的最终位置。这个 (x, y) 如果指定了 viewport，就是相对于 viewport 左上角，否则就是相对于屏幕左上角。</p>
-        <p>根据以上信息，我们可以简单地把上面的 s 定位到屏幕正中：</p>
-        <pre><code>s.ox, s.oy = s.width / 2, s.height / 2
+    <p>首先从 bitmap 上裁下 src_rect 指定的一块图案，然后以 src_rect 的左上角为原点确定 (ox, oy) 的位置，最后把 (ox, oy) 这个点对齐到 (x, y) 上，就是该 sprite 的最终位置。这个 (x, y) 如果指定了 viewport，就是相对于 viewport 左上角，否则就是相对于屏幕左上角。</p>
+    <p>根据以上信息，我们可以简单地把上面的 s 定位到屏幕正中：</p>
+    <pre><code>s.ox, s.oy = s.width / 2, s.height / 2
 s.x, s.y = Graphics.width / 2, Graphics.height / 2</code></pre>
-        <h4>主循环</h4>
-        <p>代码是顺序执行的 —— 这意味着如果我们把默认脚本删光，这个游戏窗口会闪一下就消失，因为脚本<q>执行完了</q>。RGSS 的运行主要依赖于一个循环，它让这个游戏窗口一直显示、一直有内容、以及响应用户的操作</p>
-        <pre><code>loop do
+    <h4>主循环</h4>
+    <p>代码是顺序执行的 —— 这意味着如果我们把默认脚本删光，这个游戏窗口会闪一下就消失，因为脚本<q>执行完了</q>。RGSS 的运行主要依赖于一个循环，它让这个游戏窗口一直显示、一直有内容、以及响应用户的操作</p>
+    <pre><code>loop do
   Input.update # 读取用户输入
   # 更新游戏对象
   Graphics.update # 刷新屏幕以显示最新的游戏对象，并将 FPS 稳定到 Graphics.frame_rate
 end</code></pre>
-        <p>结合上面的雪碧，试试写一个通过上下左右按键控制雪碧移动吧！参考实现：</p>
-        <pre><code>def spr(*args)
+    <p>结合上面的雪碧，试试写一个通过上下左右按键控制雪碧移动吧！参考实现：</p>
+    <pre><code>def spr(*args)
   s = Sprite.new
   b = Bitmap.new(*args)
   s.bitmap = b
@@ -281,11 +280,11 @@ mainloop do
   s.y -= 1 if Input.press? :UP
 end
 # 如果感到难以理解这里代码具体的运行顺序，可以搜索<q>Ruby 块</q></code></pre>
-        <h4>文档</h4>
-        <p>游戏库的文档主要就是 F1，99% 的游戏功能你都需要不停地翻看 F1、默认脚本、别人的脚本来理解和使用。</p>
-        <h3>Ruby &mdash; 元编程</h3>
-        <p>Ruby 最大的优势之一就是其元编程的能力使得编写插件、造 DSL 等毫不费力，甚至被人说成是<q>魔法</q>。其实理解元编程有助于我们理解 Ruby 面向对象的本质，而且用起来真的很爽。</p>
-        <pre><code># <q>打开</q>类
+    <h4>文档</h4>
+    <p>游戏库的文档主要就是 F1，99% 的游戏功能你都需要不停地翻看 F1、默认脚本、别人的脚本来理解和使用。</p>
+    <h3>Ruby &mdash; 元编程</h3>
+    <p>Ruby 最大的优势之一就是其元编程的能力使得编写插件、造 DSL 等毫不费力，甚至被人说成是<q>魔法</q>。其实理解元编程有助于我们理解 Ruby 面向对象的本质，而且用起来真的很爽。</p>
+    <pre><code># <q>打开</q>类
 class A
   def a
     42
@@ -345,12 +344,12 @@ class A
   end
 end
 A.new.miaomiao #=> "called undefined miaomiao“</code></pre>
-        <p>还有很多很多，建议参考<q>Ruby 元编程</q>一书。</p>
-        <h3>RGSS &mdash; 插件</h3>
-        <p>所谓<q>插件</q>，就是尽量做到<q>直接插入指定位置（一般为 Main 前），不需要手动修改默认脚本即可使用</q>的脚本。而我们的脚本一般都是对游戏系统有所修改的，大部分情况下我们会使用 <code>alias</code> 等对默认脚本进行修改，这个在上文中也有所介绍。这里我唯一能给出的建议是：别用 <code>old</code> <code>old_update</code> 这样的名字，很容易撞上。</p>
-        <h4>实现<q>热插拔</q></h4>
-        <p>改一下代码重启一下游戏真是太麻烦了，要是有什么简化重新载入插件的手段就好了。—— 接下来我们就来实现这个功能，主要思路是：监控一个文件夹内的所有 .rb 文件，如果有任何改动（增加、删除、修改），就将这些改动同步到正在运行的游戏内。所谓<q>监控</q>也很简单，每次 <code>Graphics.update</code> 都扫一遍文件的修改时间 <code>File.mtime</code> 即可。</p>
-        <pre><code>class &lt;&lt; Graphics
+    <p>还有很多很多，建议参考<q>Ruby 元编程</q>一书。</p>
+    <h3>RGSS &mdash; 插件</h3>
+    <p>所谓<q>插件</q>，就是尽量做到<q>直接插入指定位置（一般为 Main 前），不需要手动修改默认脚本即可使用</q>的脚本。而我们的脚本一般都是对游戏系统有所修改的，大部分情况下我们会使用 <code>alias</code> 等对默认脚本进行修改，这个在上文中也有所介绍。这里我唯一能给出的建议是：别用 <code>old</code> <code>old_update</code> 这样的名字，很容易撞上。</p>
+    <h4>实现<q>热插拔</q></h4>
+    <p>改一下代码重启一下游戏真是太麻烦了，要是有什么简化重新载入插件的手段就好了。—— 接下来我们就来实现这个功能，主要思路是：监控一个文件夹内的所有 .rb 文件，如果有任何改动（增加、删除、修改），就将这些改动同步到正在运行的游戏内。所谓<q>监控</q>也很简单，每次 <code>Graphics.update</code> 都扫一遍文件的修改时间 <code>File.mtime</code> 即可。</p>
+    <pre><code>class &lt;&lt; Graphics
   alias update_without_hotreload update
   def update
     update_without_hotreload
@@ -374,32 +373,31 @@ A.new.miaomiao #=> "called undefined miaomiao“</code></pre>
     '' # 消除所有 alias 带来的影响，这里可以通过读注释等方法获取信息
   end
 end</code></pre>
-        <h4>基于 dll 扩展</h4>
-        <p>编写 dll 已经不算入门教程了，可以参考我的另外两篇文章，</p>
-        <ul>
-            <li><a href="https://hyrious.me/p/rgss-extension-dll-and-nodll.html">How to Write an RGSS Extension</a></li>
-            <li><a href="https://hyrious.me/p/rgss-pass-callback-to-c-api.html">How to Pass Callback to Dll in RGSS</a></li>
-        </ul>
-        <h3>附录：安装和运行独立的 Ruby</h3>
-        <h4>安装</h4>
-        <p>鉴于 RGSS 的运行平台是 Windows，这里直接讲 Windows 平台的安装方法。</p>
-        <ol>
-            <li>打开 <a href="https://rubyinstaller.org/downloads/">RubyInstaller</a> 下载页</li>
-            <li>点击<q><strong>WITHOUT</strong> DEVKIT</q>下的第一个链接下载，编写本文时它是<q><a href="https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.6.3-1/rubyinstaller-2.6.3-1-x64.exe">Ruby 2.6.3-1 (x64)</a></q><br>安装包大约 10MB 左右，但 GitHub 线路在国内访问通常较慢，请耐心等待或者科学上网</li>
-            <li>双击运行 rubyinstaller-*.exe<br>安装过程中可能会有<q>关联 .rb 文件为可执行程序</q>的选项，建议取消勾选（看不懂英文的无视这句话）<br>安装结束时有一个默认打勾的<q>Run 'ridk install' ……</q>，<strong>取消勾选</strong>，点击 Finish 按钮完成安装</li>
-        </ol>
-        <p>为了验证安装成功，从你的开始菜单中打开<q>命令提示符</q>（也就是常说的 cmd），在里面输入 <code>ruby -v</code> 回车（注意空格和大小写），你应该看到类似</p>
-        <pre><code>ruby 2.6.3p62 (2019-04-16 revision 67580) [x64-mingw32]</code></pre>
-        <p>而不是</p>
-        <pre><code>'ruby' 不是内部或外部命令，也不是可运行的程序或批处理文件。</code></pre>
-        <h4>运行</h4>
-        <p>用你的文本编辑器（Win10 的记事本、VSCode 等）新建并打开一个文件，输入 ruby 代码后保存为后缀名为 .rb 的文件，然后打开 cmd，输入 <code>ruby </code>（注意空格），接着把该文件拖放进 cmd，你应该会看到控制台内变成了</p>
-        <pre><code>C:\>ruby C:\Users\abc\Desktop\a.rb</code></pre>
-        <p>之类的，然后敲一下回车，运行时的输出（<code>p puts</code> 等）会显示在下面。</p>
-        <p>你也可以在 cmd 里输入 <code>irb</code> 回车，这时会打开一个 Ruby 的<q>REPL</q>，也就是你输入一行它返回一行的东西，方便快速验证一些想法。</p>
-        <hr>
-        <p align="right"><a href="https://github.com/hyrious/rgss/tree/master/p/tutorial.html">帮助编辑本页面</a></p>
-    </article>
+    <h4>基于 dll 扩展</h4>
+    <p>编写 dll 已经不算入门教程了，可以参考我的另外两篇文章，</p>
+    <ul>
+        <li><a href="https://hyrious.me/p/rgss-extension-dll-and-nodll.html">How to Write an RGSS Extension</a></li>
+        <li><a href="https://hyrious.me/p/rgss-pass-callback-to-c-api.html">How to Pass Callback to Dll in RGSS</a></li>
+    </ul>
+    <h3>附录：安装和运行独立的 Ruby</h3>
+    <h4>安装</h4>
+    <p>鉴于 RGSS 的运行平台是 Windows，这里直接讲 Windows 平台的安装方法。</p>
+    <ol>
+        <li>打开 <a href="https://rubyinstaller.org/downloads/">RubyInstaller</a> 下载页</li>
+        <li>点击<q><strong>WITHOUT</strong> DEVKIT</q>下的第一个链接下载，编写本文时它是<q><a href="https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.6.3-1/rubyinstaller-2.6.3-1-x64.exe">Ruby 2.6.3-1 (x64)</a></q><br>安装包大约 10MB 左右，但 GitHub 线路在国内访问通常较慢，请耐心等待或者科学上网</li>
+        <li>双击运行 rubyinstaller-*.exe<br>安装过程中可能会有<q>关联 .rb 文件为可执行程序</q>的选项，建议取消勾选（看不懂英文的无视这句话）<br>安装结束时有一个默认打勾的<q>Run 'ridk install' ……</q>，<strong>取消勾选</strong>，点击 Finish 按钮完成安装</li>
+    </ol>
+    <p>为了验证安装成功，从你的开始菜单中打开<q>命令提示符</q>（也就是常说的 cmd），在里面输入 <code>ruby -v</code> 回车（注意空格和大小写），你应该看到类似</p>
+    <pre><code>ruby 2.6.3p62 (2019-04-16 revision 67580) [x64-mingw32]</code></pre>
+    <p>而不是</p>
+    <pre><code>'ruby' 不是内部或外部命令，也不是可运行的程序或批处理文件。</code></pre>
+    <h4>运行</h4>
+    <p>用你的文本编辑器（Win10 的记事本、VSCode 等）新建并打开一个文件，输入 ruby 代码后保存为后缀名为 .rb 的文件，然后打开 cmd，输入 <code>ruby </code>（注意空格），接着把该文件拖放进 cmd，你应该会看到控制台内变成了</p>
+    <pre><code>C:\>ruby C:\Users\abc\Desktop\a.rb</code></pre>
+    <p>之类的，然后敲一下回车，运行时的输出（<code>p puts</code> 等）会显示在下面。</p>
+    <p>你也可以在 cmd 里输入 <code>irb</code> 回车，这时会打开一个 Ruby 的<q>REPL</q>，也就是你输入一行它返回一行的东西，方便快速验证一些想法。</p>
+    <hr>
+    <p align="right"><a href="https://github.com/hyrious/rgss/tree/master/p/tutorial.html">帮助编辑本页面</a></p>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.2.0/anchor.min.js"></script>
     <script>
         ;(function () {
