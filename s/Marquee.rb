@@ -5,7 +5,6 @@
 # @plugindesc Show marquee on long items in Window_Command
 # @author hyrious
 
-# 当指令窗口的一行超出范围时，滚动显示
 class Window_Command < Window_Selectable
   alias _marquee_refresh refresh
   def refresh
@@ -16,7 +15,7 @@ class Window_Command < Window_Selectable
   alias _marquee_draw_item draw_item
   def draw_item(index)
     text = command_name(index)
-    size = text_size(text); size.width += 2 # 由于描边等补正这个宽度
+    size = text_size(text); size.width += 2 # Fix actual width because of outline
     rect = item_rect_for_text(index)
     if rect.width < size.width
       b = Bitmap.new(size.width, size.height)
@@ -36,7 +35,7 @@ class Window_Command < Window_Selectable
       e[3] = +1 if e[3] < 0 and e[1] <= 0
       _draw_marquee_item(e[0], e[1], e[4])
     }
-    # 如果要“只滚动当前选中元素”，注释掉上一段，改用下一段
+    # If you want "only scroll the selected item", use the code below
     # @marquee.each { |e|
     #   if e[0] == index
     #     e[1] += e[3]
@@ -52,7 +51,6 @@ class Window_Command < Window_Selectable
   def _draw_marquee_item(index, dx, b)
     clear_item(index)
     change_color(normal_color, command_enabled?(index))
-    text = command_name(index)
     dst = item_rect_for_text(index)
     src = b.rect.clone; src.x += dx
     contents.blt(dst.x, dst.y, b, src)
